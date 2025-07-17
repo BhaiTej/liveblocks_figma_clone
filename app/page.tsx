@@ -3,7 +3,6 @@
 import { fabric } from "fabric";
 import { useEffect, useRef, useState } from "react";
 import { useMutation, useRedo, useStorage, useUndo } from "@liveblocks/react";
-import { Comment } from "@liveblocks/react-comments";
 import {
   handleCanvaseMouseMove,
   handleCanvasMouseDown,
@@ -26,7 +25,6 @@ import Live from '@/components/Live'
 import { handleImageUpload } from "@/lib/shapes";
 import { defaultNavElement } from "@/constants";
 import { ActiveElement, Attributes } from "@/types/type";
-import { Comments } from "@/components/comments/Comments";
 export default function Page(){
   const undo = useUndo();
   const redo = useRedo();
@@ -77,7 +75,7 @@ export default function Page(){
     // if the passed object is null, return
     if (!object) return;
     const { objectId } = object;
-
+    
     /**
      * Turn Fabric object (kclass) into JSON format so that we can store it in the
      * key-value store.
@@ -86,9 +84,11 @@ export default function Page(){
     shapeData.objectId = objectId;
 
     const canvasObjects = storage.get("canvasObject");
+    if (!canvasObjects) return <div className='text-center p-10'>Loading canvas...</div>
     /**
      * set is a method provided by Liveblocks that allows you to set a value
      *
+     * if (!canvasObjects) return <div className='text-center p-10'>Loading canvas...</div>
      * set: https://liveblocks.io/docs/api-reference/liveblocks-client#LiveMap.set
      */
     canvasObjects.set(objectId, shapeData);
