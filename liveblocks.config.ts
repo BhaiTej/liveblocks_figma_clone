@@ -1,130 +1,91 @@
-import { LiveMap, LiveObject, createClient } from "@liveblocks/client";
+// Define Liveblocks types for your application
+// https://liveblocks.io/docs/api-reference/liveblocks-react#Typing-your-data
+import { LiveMap,LiveObject,createClient } from "@liveblocks/client";
 import { createRoomContext } from "@liveblocks/react";
+const client=createClient({
+  publicApiKey:process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY!,
+})
+declare global {
+  interface Liveblocks {
+    // Each user's Presence, for useMyPresence, useOthers, etc.
+    Presence: {
+      // Example, real-time cursor coordinates
+      // cursor: { x: number; y: number };
+      cursor: { x: number; y: number } | null;
+      cursorColor: string | null;
+      editingtext: string | null;
+    };
+    
 
-// Create Liveblocks client
-const client = createClient({
-  throttle: 16,
-  publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY!,
-});
+    // The Storage tree for the room, for useMutation, useStorage, etc.
+    Storage: {
+      canvasObject: LiveMap<string, any>;
+      userState: LiveObject<{
+        cursor: { x: number; y: number } | null;
+        cursorColor: string | null;
+        editingtext: string | null;
+      }>;
+    };
 
-// Presence type: synced state per user
-type Presence = {
-  cursor: { x: number; y: number } | null;
-  cursorColor: string | null;
-  editingtext: string | null;
-};
+    // Custom user info set when authenticating with a secret key
+    UserMeta: {
+      id: string;
+      info: {
+        // Example properties, for useSelf, useUser, useOthers, etc.
+        // name: string;
+        // avatar: string;
+      };
+    };
 
-// Storage type: persisted shared state across users
-type Storage = {
-  canvasObjects: LiveMap<string, any>;
-  userState: LiveObject<Presence>;
-};
+    // Custom events, for useBroadcastEvent, useEventListener
+    RoomEvent: {};
+      // Example has two events, using a union
+      // | { type: "PLAY" } 
+      // | { type: "REACTION"; emoji: "🔥" };
 
-// Optional metadata for each user (e.g., name, avatar)
-type UserMeta = {
-  id?: string;
-  info?: {
-    name?: string;
-    avatar?: string;
-  };
-};
+    // Custom metadata set on threads, for useThreads, useCreateThread, etc.
+    ThreadMetadata: {
+      // Example, attaching coordinates to a thread
+      // x: number;
+      // y: number;
+    };
 
-// Custom broadcast events
-type RoomEvent = {}; // Add custom event types if needed
+    // Custom room info set with resolveRoomsInfo, for useRoomInfo
+    RoomInfo: {
+      // Example, rooms with a title and url
+      // title: string;
+      // url: string;
+    };
+  }
+}
+// declare global {
+//   interface Liveblocks {
+//     Presence: {
+//       cursor: { x: number; y: number } | null;
+//       cursorColor: string | null;
+//       editingtext: string | null;
+//     };
 
-// Metadata attached to each comment thread
-export type ThreadMetadata = {
-  resolved: boolean;
-  zIndex: number;
-  x: number;
-  y: number;
-  [key: string]: string | number | boolean;
-};
+//     Storage: {
+//       canvasObject: LiveMap<string, any>;
+//       userState: LiveObject<{
+//         cursor: { x: number; y: number } | null;
+//         cursorColor: string | null;
+//         editingtext: string | null;
+//       }>;
+//     };
 
-// Create Liveblocks room context with your types
-const {
-  suspense: liveblocks,
-} = createRoomContext<Presence, Storage, UserMeta, RoomEvent, ThreadMetadata>(client, {
-  async resolveUsers({ userIds }) {
-    return []; // implement if using mentions/comments
-  },
-  async resolveMentionSuggestions({ text, roomId }) {
-    return []; // implement if using mentions/comments
-  },
-});
-export const {
-  suspense: {
-    RoomProvider,
-    useRoom,
-    useMyPresence,
-    useUpdateMyPresence,
-    useSelf,
-    useOthers,
-    useOthersMapped,
-    useOthersConnectionIds,
-    useOther,
-    useBroadcastEvent,
-    useEventListener,
-    useErrorListener,
-    useStorage,
-    useObject,
-    useMap,
-    useList,
-    useBatch,
-    useHistory,
-    useUndo,
-    useRedo,
-    useCanUndo,
-    useCanRedo,
-    useMutation,
-    useStatus,
-    useLostConnectionListener,
-    useThreads,
-    useUser,
-    useCreateThread,
-    useEditThreadMetadata,
-    useCreateComment,
-    useEditComment,
-    useDeleteComment,
-    useAddReaction,
-    useRemoveReaction,
-  
-  },
-} = createRoomContext<Presence, Storage, UserMeta, RoomEvent, ThreadMetadata>(client, {
-  async resolveUsers({ userIds }) {
-    // Used only for Comments. Return a list of user information retrieved
-    // from `userIds`. This info is used in comments, mentions etc.
+//     UserMeta: {
+//       id: string;
+//       info: {
+//         name?: string;
+//         avatar?: string;
+//       };
+//     };
 
-    // const usersData = await __fetchUsersFromDB__(userIds);
-    //
-    // return usersData.map((userData) => ({
-    //   name: userData.name,
-    //   avatar: userData.avatar.src,
-    // }));
-
-    return [];
-  },
-  async resolveMentionSuggestions({ text, roomId }) {
-    // Used only for Comments. Return a list of userIds that match `text`.
-    // These userIds are used to create a mention list when typing in the
-    // composer.
-    //
-    // For example when you type "@jo", `text` will be `"jo"`, and
-    // you should to return an array with John and Joanna's userIds:
-    // ["john@example.com", "joanna@example.com"]
-
-    // const userIds = await __fetchAllUserIdsFromDB__(roomId);
-    //
-    // Return all userIds if no `text`
-    // if (!text) {
-    //   return userIds;
-    // }
-    //
-    // Otherwise, filter userIds for the search `text` and return
-    // return userIds.filter((userId) =>
-    //   userId.toLowerCase().includes(text.toLowerCase())
-    // );
-
-    return [];
-  },
-});
+//     RoomEvent: {}; // define if needed
+//     ThreadMetadata: {};
+//     RoomInfo: {};
+//   }
+// }
+export {};

@@ -22,34 +22,23 @@ export const initializeFabric = ({
   fabricRef: React.MutableRefObject<fabric.Canvas | null>;
   canvasRef: React.MutableRefObject<HTMLCanvasElement | null>;
 }) => {
-  const canvasElement = canvasRef.current;
-  if (!canvasElement) return null;
+  // get canvas element
+  const canvasElement = document.getElementById("canvas");
 
-  // 🔧 1. Set the canvas dimensions before creating Fabric instance
-  const containerWidth = canvasElement.parentElement?.clientWidth || window.innerWidth;
-  const containerHeight = canvasElement.parentElement?.clientHeight || window.innerHeight;
-
-  canvasElement.width = containerWidth;
-  canvasElement.height = containerHeight;
-
-  // 🔧 2. Now pass the element with correct internal width/height
-  const canvas = new fabric.Canvas(canvasElement, {
-    selection: true,
+  // create fabric canvas
+  const canvas = new fabric.Canvas(canvasRef.current, {
+    width: canvasElement?.clientWidth,
+    height: canvasElement?.clientHeight,
+    selection: true, // Ensure selection is enabled
     preserveObjectStacking: true,
     selectionColor: 'rgba(100, 100, 255, 0.3)',
     selectionBorderColor: 'rgba(100, 100, 255, 0.8)',
     selectionLineWidth: 2,
   });
 
-  // 🧠 Optionally sync with devicePixelRatio (for Retina/HiDPI screens)
-  const dpr = window.devicePixelRatio || 1;
-  canvas.setDimensions({ width: containerWidth, height: containerHeight }, {
-    backstoreOnly: true,
-  });
-  canvas.setZoom(dpr);
-
-  // Store ref
+  // set canvas reference to fabricRef so we can use it later anywhere outside canvas listener
   fabricRef.current = canvas;
+
   return canvas;
 };
 

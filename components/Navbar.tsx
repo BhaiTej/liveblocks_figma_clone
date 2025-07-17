@@ -9,7 +9,7 @@ import { ActiveElement, NavbarProps } from "@/types/type";
 import { Button } from "./ui/button";
 import ShapesMenu from "./ShapesMenu";
 import ActiveUsers from "./users/ActiveUsers";
-import { NewThread } from "./comments/NewThread";
+
 
 const Navbar = ({ activeElement, imageInputRef, handleImageUpload, handleActiveElement }: NavbarProps) => {
   const isActive = (value: string | Array<ActiveElement>) =>
@@ -21,7 +21,9 @@ const Navbar = ({ activeElement, imageInputRef, handleImageUpload, handleActiveE
       <Image src="/assets/logo.svg" alt="FigPro Logo" width={58} height={20} />
 
       <ul className="flex flex-row">
-        {navElements.map((item: ActiveElement | any) => (
+        {navElements
+        .filter((item) => item.value !== "comments")
+        .map((item: ActiveElement | any) => (
           <li
             key={item.name}
             onClick={() => {

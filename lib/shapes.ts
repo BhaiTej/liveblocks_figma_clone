@@ -50,6 +50,7 @@ export const createLine = (pointer: PointerEvent) => {
       stroke: "#aabbcc",
       strokeWidth: 2,
       objectId: uuidv4(),
+      strokeUniform: true,
     } as CustomFabricObject<fabric.Line>
   );
 };
@@ -65,7 +66,29 @@ export const createText = (pointer: PointerEvent, text: string) => {
     objectId: uuidv4()
   } as fabric.ITextOptions);
 };
+export const createArrow = (pointer: PointerEvent) => {
+  const startX = pointer.x;
+  const startY = pointer.y;
+  const endX = pointer.x + 100;
+  const endY = pointer.y + 100;
 
+  const arrow = new fabric.Path(
+    `M ${startX} ${startY} L ${endX} ${endY} 
+     M ${endX} ${endY} 
+     l -10 -5 
+     M ${endX} ${endY} 
+     l -10 5`,
+    {
+      fill: "",
+      stroke: "#aabbcc",
+      strokeWidth: 2,
+      strokeUniform: true,
+      objectId: uuidv4(),
+    } as CustomFabricObject<fabric.Path>
+  );
+
+  return arrow;
+};
 export const createSpecificShape = (
   shapeType: string,
   pointer: PointerEvent
@@ -82,6 +105,8 @@ export const createSpecificShape = (
 
     case "line":
       return createLine(pointer);
+    case "arrow":
+      return createArrow(pointer);
 
     case "text":
       return createText(pointer, "Tap to Type");

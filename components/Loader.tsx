@@ -3,7 +3,7 @@ import Image from "next/image";
 const Loader = () => (
   <div className='flex h-screen w-screen flex-col items-center justify-center gap-2'>
     <Image
-      src='/assests/loader.gif'
+      src='public/loader.gif'
       alt='loader'
       width={100}
       height={100}
